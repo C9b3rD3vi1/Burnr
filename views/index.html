@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Expirely - Temporary Link Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="max-w-md mx-auto mt-20 bg-white p-8 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">🔗 Expirely</h1>
+    <form id="linkForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Target URL</label>
+        <input type="url" name="url" placeholder="https://example.com" required
+               class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-200" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Max Clicks</label>
+        <input type="number" name="max_clicks" value="5" min="1"
+               class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-200" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Expires In (Minutes)</label>
+        <input type="number" name="expire_min" value="60" min="1"
+               class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-200" />
+      </div>
+      <button type="submit"
+              class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+        Generate Link
+      </button>
+    </form>
+
+    <div id="result" class="mt-6 hidden">
+      <p class="text-gray-700 text-sm mb-2">Short URL:</p>
+      <div class="flex items-center">
+        <input id="shortUrl" readonly class="flex-1 px-3 py-2 border rounded-md" />
+        <button onclick="copyLink()"
+                class="ml-2 bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 transition">
+          Copy
+        </button>
+      </div>
+      <p id="copyMsg" class="text-xs text-green-600 mt-1 hidden">Copied!</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('linkForm').onsubmit = async function (e) {
+      e.preventDefault();
+      const form = new FormData(e.target);
+      const res = await fetch("/create", {
+        method: "POST",
+        body: JSON.stringify({
+          url: form.get("url"),
+          max_clicks: parseInt(form.get("max_clicks")),
+          expire_min: parseInt(form.get("expire_min"))
+        }),
+        headers: { "Content-Type": "application/json" }
+      });
+      const data = await res.json();
+      const shortUrl = document.getElementById("shortUrl");
+      shortUrl.value = data.short_url;
+      document.getElementById("result").classList.remove("hidden");
+      document.getElementById("copyMsg").classList.add("hidden");
+    };
+
+    function copyLink() {
+      const url = document.getElementById("shortUrl");
+      url.select();
+      url.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      document.getElementById("copyMsg").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>

@@ -3,7 +3,7 @@ package database
 import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"Burnr/models"
+	"github.com/C9b3rD3vi1/Burnr/models"
 	"log"
 )
 

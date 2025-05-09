@@ -1,16 +1,16 @@
-module github.com/C9b3rD3vi1/Burnr.git
+module github.com/C9b3rD3vi1/Burnr
 
 go 1.23.7
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.6
+	github.com/google/uuid v1.6.0
 	gorm.io/driver/sqlite v1.5.7
 	gorm.io/gorm v1.26.1
 )
 
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect

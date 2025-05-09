@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"Burnr/database"
-	"Burnr/models"
+	"github.com/C9b3rD3vi1/Burnr/models"
+	"github.com/C9b3rD3vi1/Burnr/database"
 )
 // CreateLink handles the creation of a new shortened link
 // It expects a JSON body with the URL, max clicks, and expiration time in minutes

@@ -2,8 +2,9 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"Burnr/database"
-	"Burnr/handlers"
+	//"github.com/C9b3rD3vi1/Burnr/models"
+	"github.com/C9b3rD3vi1/Burnr/handlers"
+	"github.com/C9b3rD3vi1/Burnr/database"
 )
 
 
