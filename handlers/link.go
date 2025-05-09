@@ -30,9 +30,14 @@ func CreateLink(c *fiber.Ctx) error {
 		MaxClicks: body.MaxClicks,
 		ExpiresAt: time.Now().Add(time.Duration(body.ExpireMin) * time.Minute),
 		CreatedAt: time.Now(),
+		Clicks:    0,
+		Shortened: uuid.NewString(), // or generate a shorter custom string
 	}
+	
 
-	database.DB.Create(&link)
+	if err := database.DB.Create(&link).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save link"})
+	}
 
 	return c.JSON(fiber.Map{"short_url": c.BaseURL() + "/" + link.ID})
 }
@@ -40,6 +45,11 @@ func CreateLink(c *fiber.Ctx) error {
 func RedirectLink(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var link models.Link
+
+	// Prevent reserved paths from being treated as link IDs
+	if id == "admin" {
+		return c.Redirect("/admin")
+	}
 
 	result := database.DB.First(&link, "id = ?", id)
 	if result.Error != nil {

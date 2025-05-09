@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        h2 {
+            margin: 20px 0;
+            font-size: 1.5em;
+        }
+        table {
+            width: 90%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Expeiry Admin Dashboard</h1>
+    </header>
+    <div class="container">
+        <h2>Links</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Shortened URL</th>
+                    <th>Original URL</th>
+                    <th>Clicks</th>
+                    <th>Expires At</th>
+                </tr>
+            </thead>
+            <tbody id="linksTable">
+                {{range .links}}
+                <tr data-expiry="{{.ExpiresAt}}">
+                    <td><a href="/{{.ID}}">/{{.ID}}</a></td>
+                    <td>{{.TargetURL}}</td>
+                    <td>{{.Clicks}}</td>
+                    <td class="expires-time" data-expiry="{{.ExpiresAt}}">{{.ExpiresAt}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <p>&copy; 2025 cyberlock technologies. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Function to update the expiration times every second
+        function updateExpirationTimes() {
+            const rows = document.querySelectorAll("tr[data-expiry]");
+
+            rows.forEach(row => {
+                const expiryTime = new Date(row.getAttribute("data-expiry"));
+                const expiresAtElement = row.querySelector(".expires-time");
+
+                const now = new Date();
+                const diffInSeconds = Math.max(0, Math.floor((expiryTime - now) / 1000));
+
+                // Format the remaining time in seconds
+                const minutes = Math.floor(diffInSeconds / 60);
+                const seconds = diffInSeconds % 60;
+
+                expiresAtElement.textContent = `${minutes}m ${seconds}s`;
+
+                // If the time expired, set it to 'Expired'
+                if (diffInSeconds <= 0) {
+                    expiresAtElement.textContent = "Expired";
+                }
+            });
+        }
+
+        // Update the expiration times every second
+        setInterval(updateExpirationTimes, 1000);
+
+        // Initial call to set the correct time on page load
+        updateExpirationTimes();
+    </script>
+</body>
+</html>

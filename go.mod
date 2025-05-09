@@ -9,8 +9,13 @@ require (
 	gorm.io/gorm v1.26.1
 )
 
+require github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569 // indirect
+
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
+	github.com/gofiber/template v1.8.3 // indirect
+	github.com/gofiber/template/html/v2 v2.1.3
+	github.com/gofiber/utils v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect

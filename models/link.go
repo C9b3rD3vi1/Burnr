@@ -10,6 +10,7 @@ import (
 type Link struct {
 	ID        string    `gorm:"primaryKey"`
 	TargetURL string
+	Shortened string    `gorm:"not null;unique"`
 	Clicks    int
 	MaxClicks int
 	ExpiresAt time.Time
