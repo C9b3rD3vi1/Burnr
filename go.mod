@@ -5,11 +5,10 @@ go 1.23.7
 require (
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/google/uuid v1.6.0
+	golang.org/x/crypto v0.14.0
 	gorm.io/driver/sqlite v1.5.7
 	gorm.io/gorm v1.26.1
 )
-
-require github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569 // indirect
 
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect

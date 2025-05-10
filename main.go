@@ -29,6 +29,14 @@ func main() {
 
 	app.Get("/admin", handlers.AdminManageHandler) // admin page
 
+	app.Get("/register", func(c *fiber.Ctx) error {
+		return c.Render("register", fiber.Map{})
+	})
+	
+
+	app.Post("register", handlers.UserRegister) // user registration page
+
+
 	app.Get("/:id", handlers.RedirectLink)
 
 	

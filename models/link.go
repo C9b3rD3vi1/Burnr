@@ -2,8 +2,7 @@ package models
 
 import (
 	"time"
-
-	//"gorm.io/gorm"
+	"gorm.io/gorm"
 )
 
 // Link struct
@@ -15,4 +14,8 @@ type Link struct {
 	MaxClicks int
 	ExpiresAt time.Time
 	CreatedAt time.Time
+
+	UserID uint `gorm:"not null"`
+	
+	gorm.Model
 }
