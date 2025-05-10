@@ -19,6 +19,8 @@ Burnr is a simple, fast, and privacy-focused link shortener built with [Go Fiber
 
 ## 📦 Tech Stack
 
+![code](./images/code.png)
+
     - Backend: Go (Fiber)
     - ORM: GORM
     - Templating: HTML (with Go templates)
@@ -80,7 +82,7 @@ Visit /admin to see all shortened links with their metadata (clicks, expiration 
 
 🧪 API Endpoints
 
-    Method	Route	Description
+    ***Method	Route	Description***
 
         POST	/create	Create a new short URL
         GET	/:id	Redirect to original URL
