@@ -40,7 +40,8 @@ func main() {
 	app.Get("/dashboard", func(c *fiber.Ctx) error {
 		return c.Render("dashboard", fiber.Map{})
 	})
-	//app.Post("/dashboard", handlers.UserDashboard) // user dashboard page
+
+	app.Post("/dashboard", handlers.UserDashboard) // user dashboard page
 	
 
 	app.Post("register", handlers.UserRegister) // user registration page

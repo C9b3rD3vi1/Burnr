@@ -121,9 +121,27 @@ func UserLogin(c *fiber.Ctx) error {
 		})
 		
 	}
-	// log the user in
-	// For now, just return a success message
-	return c.JSON(fiber.Map{
-		"message": "User logged in successfully",
+	// log the user in and redirect to dashboard
+	return c.Redirect("/dashboard")
+	
+}
+
+
+// UserDashboard handles the user dashboard page
+func UserDashboard(c *fiber.Ctx) error {
+	// Fetch user ID from session or token
+	userID := c.Locals("userID") // Assuming you have middleware to set this
+
+	// Fetch user links
+	var links []models.Link
+	if err := database.DB.Where("user_id = ?", userID).Find(&links).Error; err != nil {
+		log.Println("DB error fetching user links:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Could not fetch user links",
+		})
+	}
+
+	return c.Render("dashboard", fiber.Map{
+		"links": links,
 	})
 }
