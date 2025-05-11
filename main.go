@@ -32,6 +32,15 @@ func main() {
 	app.Get("/register", func(c *fiber.Ctx) error {
 		return c.Render("register", fiber.Map{})
 	})
+	app.Get("/login", func(c *fiber.Ctx) error {
+		return c.Render("login", fiber.Map{})
+	})
+	app.Post("/login", handlers.UserLogin) // login page
+
+	app.Get("/dashboard", func(c *fiber.Ctx) error {
+		return c.Render("dashboard", fiber.Map{})
+	})
+	//app.Post("/dashboard", handlers.UserDashboard) // user dashboard page
 	
 
 	app.Post("register", handlers.UserRegister) // user registration page
