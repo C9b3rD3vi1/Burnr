@@ -5,7 +5,7 @@ go 1.23.7
 require (
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/google/uuid v1.6.0
-	golang.org/x/crypto v0.14.0
+	golang.org/x/crypto v0.35.0
 	gorm.io/driver/sqlite v1.5.7
 	gorm.io/gorm v1.26.1
 )
@@ -26,6 +26,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.20.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 )
