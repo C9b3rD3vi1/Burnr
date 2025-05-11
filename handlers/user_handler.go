@@ -89,3 +89,41 @@ func UserRegister(c *fiber.Ctx) error {
 		"message": "User registered successfully",
 	})
 }
+
+// user login function
+func UserLogin(c *fiber.Ctx) error {
+	username := strings.TrimSpace(c.FormValue("username"))
+	password := c.FormValue("password")
+
+	// Basic validation
+	if username == "" || password == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Username and password are required",
+		})
+	}
+	// Fetch user
+	var user models.User
+	if err := database.DB.Where("username = ?", username).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid username or password",
+			})
+		}
+		log.Println("DB error fetching user:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Server error",
+		})
+	}
+	// Check password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid username or password",
+		})
+		
+	}
+	// log the user in
+	// For now, just return a success message
+	return c.JSON(fiber.Map{
+		"message": "User logged in successfully",
+	})
+}
