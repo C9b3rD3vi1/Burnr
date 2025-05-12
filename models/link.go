@@ -16,8 +16,7 @@ type Link struct {
 	CreatedAt  time.Time
 	UserID     uint      `gorm:"not null"`
 
-	// Optional reverse relationship
-	ClicksData []LinkClick `gorm:"foreignKey:LinkID"`
+	ClicksData []LinkClick `gorm:"foreignKey:LinkID"` // One-to-many
 
 	gorm.Model
 }
@@ -26,14 +25,13 @@ type Link struct {
 // Link data analysis struct
 type LinkClick struct {
 	ID        uint      `gorm:"primaryKey"`
-	LinkID    string    // This links back to Link.ID (which is a string)
+	LinkID    string    `gorm:"index"` // Still a string, matches Link.ID
 	Time      time.Time
 	IP        string
 	Referrer  string
 	Device    string
 	Country   string
 
-	// Optional: Add relation back to Link
-	Link      Link      `gorm:"foreignKey:LinkID;constraint:OnDelete:CASCADE"`
+	Link Link `gorm:"foreignKey:LinkID;references:ID;constraint:OnDelete:CASCADE"`
 }
 

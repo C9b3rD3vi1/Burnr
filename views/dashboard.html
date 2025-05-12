@@ -36,6 +36,11 @@
     .alert {
       margin-top: 10px;
     }
+    .click-data-section {
+      margin-top: 30px;
+      border-top: 2px solid #007bff;
+      padding-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -92,7 +97,6 @@
               <th>Expires In</th>
             </tr>
           </thead>
-          {{ end }}
           <tbody>
             {{ range .user.Links }}
             <tr data-toggle="collapse" data-target="#details-{{ .ID }}" class="clickable">
@@ -120,7 +124,18 @@
               </td>
             </tr>
             {{ end }}
+          </tbody>
+        </table>
+        {{ else }}
+        <p class="text-center">You have no links yet.</p>
+        {{ end }}
       </div>
+    </div>
+
+    <!-- ====================== Click Data Section ====================== -->
+    <div class="click-data-section">
+      <h4>Click Data Analysis</h4>
+      <p>View the click data for each of your links in the table above. Click on the link to view more details.</p>
     </div>
   </div>
 

@@ -86,12 +86,20 @@ func RedirectLink(c *fiber.Ctx) error {
 	link.Clicks++
 	database.DB.Save(&link)
 
+	// Save detailed click info
+	go SaveLinkClick(c) // Use go-routine to not block redirect
+
 	return c.Redirect(link.TargetURL)
 }
 
 
 func SaveLinkClick(c *fiber.Ctx)error{
 	id := c.Params("id")
+    if id == "" {
+        return c.Status(fiber.StatusBadRequest).SendString("Link ID is missing")
+	}
+
+	
 	ip := c.IP()
 	referer := c.Get("Referer")
 	userAgent := c.Get("User-Agent")

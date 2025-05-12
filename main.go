@@ -48,7 +48,7 @@ func main() {
 	app.Post("register", handlers.UserRegister) // user registration page
 
 
-	app.Get("/:id", handlers.RedirectLink)
+	app.Get("/:id", handlers.RedirectLink, handlers.SaveLinkClick)
 
 	
 
