@@ -1,17 +1,18 @@
 package handlers
 
 import (
-	"time"
 	"encoding/json"
-	"net/http"
 	"log"
-	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
-	"github.com/mssola/user_agent"
-	"github.com/C9b3rD3vi1/Burnr/models"
+	"net/http"
+	"time"
+
 	"github.com/C9b3rD3vi1/Burnr/database"
 	"github.com/C9b3rD3vi1/Burnr/middleware"
-
+	"github.com/C9b3rD3vi1/Burnr/models"
+	"github.com/gofiber/fiber/v2"
+	//"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/google/uuid"
+	"github.com/mssola/user_agent"
 )
 
 // CreateLink handles the creation of a new shortened link

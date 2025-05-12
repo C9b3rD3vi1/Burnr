@@ -167,7 +167,17 @@ func UserDashboard(c *fiber.Ctx) error {
 		return c.Status(500).SendString("Could not fetch links")
 	}
 
+	// Build a map of clicks per link
+	clickData := make(map[string][]models.LinkClick)
+	for _, link := range links {
+		var clicks []models.LinkClick
+		if err := database.DB.Where("link_id = ?", link.ID).Find(&clicks).Error; err == nil {
+			clickData[link.ID] = clicks
+		}
+	}
+
 	return c.Render("dashboard", fiber.Map{
+		"clickData": clickData,
 		"user": fiber.Map{
 			"Username": user.Username,
 			"Email":    user.Email,

@@ -10,7 +10,7 @@ require (
 	gorm.io/gorm v1.26.1
 )
 
-require github.com/mssola/user_agent v0.6.0 // indirect
+require github.com/mssola/user_agent v0.6.0
 
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
