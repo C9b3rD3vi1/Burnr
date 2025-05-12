@@ -2,13 +2,18 @@ package handlers
 
 import (
 	"time"
-
+	"encoding/json"
+	"net/http"
+	"log"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"github.com/mssola/user_agent"
 	"github.com/C9b3rD3vi1/Burnr/models"
 	"github.com/C9b3rD3vi1/Burnr/database"
 	"github.com/C9b3rD3vi1/Burnr/middleware"
+
 )
+
 // CreateLink handles the creation of a new shortened link
 // It expects a JSON body with the URL, max clicks, and expiration time in minutes
 // It returns the shortened URL
@@ -81,4 +86,61 @@ func RedirectLink(c *fiber.Ctx) error {
 	database.DB.Save(&link)
 
 	return c.Redirect(link.TargetURL)
+}
+
+
+func SaveLinkClick(c *fiber.Ctx)error{
+	id := c.Params("id")
+	ip := c.IP()
+	referer := c.Get("Referer")
+	userAgent := c.Get("User-Agent")
+
+	device := ParseUserAgent(userAgent)
+	country := LookupCountryByIP(ip)
+
+	// save clicks
+	clicks := models.LinkClick{
+		LinkID: id,
+		Time: time.Now(),
+		IP: ip,
+		Country: country,
+		Referrer: referer,
+		Device: device,
+
+	}
+
+	if err := database.DB.Create(&clicks).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+
+
+func ParseUserAgent(ua string) string {
+	uaParser := user_agent.New(ua)
+	name, version := uaParser.Browser()
+	return name + " " + version
+}
+
+
+type IPAPIResponse struct {
+	Country string `json:"country"`
+}
+
+func LookupCountryByIP(ip string) string {
+	resp, err := http.Get("http://ip-api.com/json/" + ip)
+	if err != nil {
+		log.Println("Geo lookup failed:", err)
+		return "Unknown"
+	}
+	defer resp.Body.Close()
+
+	var result IPAPIResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		log.Println("Error decoding geo response:", err)
+		return "Unknown"
+	}
+
+	return result.Country
 }
