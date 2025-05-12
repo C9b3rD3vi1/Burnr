@@ -133,28 +133,47 @@ func UserLogin(c *fiber.Ctx) error {
 	sess.Set("username", user.Username)
 	sess.Save()
 
-
 	// log the user in and redirect to dashboard
 	return c.Redirect("/dashboard")
 	
 }
 
+func UserLogout(c *fiber.Ctx) error {
+    sess, _ := middleware.Store.Get(c)
+    sess.Destroy()
+    return c.Redirect("/login")
+}
 
-// UserDashboard handles the user dashboard page
+
+
 func UserDashboard(c *fiber.Ctx) error {
-	// Fetch user ID from session or token
-	userID := c.Locals("userID") // Assuming you have middleware to set this
+	sess, _ := middleware.Store.Get(c)
+	userID := sess.Get("userID")
+	//username := sess.Get("username")
 
-	// Fetch user links
+	if userID == nil {
+		return c.Redirect("/login")
+	}
+
+	// Fetch user info (optional, but good practice)
+	var user models.User
+	if err := database.DB.First(&user, userID).Error; err != nil {
+		return c.Status(500).SendString("User not found")
+	}
+
+	// Fetch links
 	var links []models.Link
 	if err := database.DB.Where("user_id = ?", userID).Find(&links).Error; err != nil {
-		log.Println("DB error fetching user links:", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Could not fetch user links",
-		})
+		return c.Status(500).SendString("Could not fetch links")
 	}
 
 	return c.Render("dashboard", fiber.Map{
-		"links": links,
+		"user": fiber.Map{
+			"Username": user.Username,
+			"Email":    user.Email,
+			//"Role":     user.Role,
+			"Links":    links,
+		},
 	})
 }
+

@@ -38,15 +38,14 @@ func main() {
 		return c.Render("login", fiber.Map{})
 	})
 	app.Post("/login", handlers.UserLogin) // login page
+	app.Get("/logout", handlers.UserLogout) // logout page
 
-	app.Get("/dashboard", func(c *fiber.Ctx) error {
-		return c.Render("dashboard", fiber.Map{})
-	})
+	app.Get("/dashboard", handlers.UserDashboard) // user dashboard page
 
-	app.Post("/dashboard",  handlers.UserDashboard) // user dashboard page
+	app.Post("/dashboard", middleware.AuthMiddleware, handlers.UserDashboard) // user dashboard page
 	
 
-	app.Post("register", middleware.AuthMiddleware, handlers.UserRegister) // user registration page
+	app.Post("register", handlers.UserRegister) // user registration page
 
 
 	app.Get("/:id", handlers.RedirectLink)

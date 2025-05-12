@@ -7,12 +7,18 @@ import (
 	"github.com/google/uuid"
 	"github.com/C9b3rD3vi1/Burnr/models"
 	"github.com/C9b3rD3vi1/Burnr/database"
+	"github.com/C9b3rD3vi1/Burnr/middleware"
 )
 // CreateLink handles the creation of a new shortened link
 // It expects a JSON body with the URL, max clicks, and expiration time in minutes
 // It returns the shortened URL
 
 func CreateLink(c *fiber.Ctx) error {
+	// Check if the user is logged in
+	sess, _ := middleware.Store.Get(c)
+    userID := sess.Get("userID") // This will be nil if not logged in
+
+
 	type Request struct {
 		URL       string `json:"url"`
 		MaxClicks int    `json:"max_clicks"`
@@ -34,6 +40,14 @@ func CreateLink(c *fiber.Ctx) error {
 		Shortened: uuid.NewString(), // or generate a shorter custom string
 	}
 	
+	 // If user is logged in, associate the link with their user ID
+	 if userID != nil {
+        uid, ok := userID.(uint)
+        if ok {
+            link.UserID = uid
+        }
+    }
+	
 
 	if err := database.DB.Create(&link).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save link"})
@@ -42,6 +56,9 @@ func CreateLink(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"short_url": c.BaseURL() + "/" + link.ID})
 }
 
+
+// RedirectLink handles the redirection of a shortened link
+// It checks if the link exists, if it has expired, and if the max clicks have been reached
 func RedirectLink(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var link models.Link
