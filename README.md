@@ -17,6 +17,8 @@ Burnr is a simple, fast, and privacy-focused link shortener built with [Go Fiber
 
 ![Demo](./images/index.png)
 
+![User Dashboard](./images/dashboard.png)
+
 ## 📦 Tech Stack
 
 ![code](./images/code.png)
