@@ -4,9 +4,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 	//"github.com/C9b3rD3vi1/Burnr/models"
 	"github.com/C9b3rD3vi1/Burnr/handlers"
+	"github.com/C9b3rD3vi1/Burnr/middleware"
 	"github.com/C9b3rD3vi1/Burnr/database"
 	"github.com/gofiber/template/html/v2" // html template engine
 	"github.com/gofiber/fiber/v2/middleware/logger"
+
 
 )
 
@@ -41,10 +43,10 @@ func main() {
 		return c.Render("dashboard", fiber.Map{})
 	})
 
-	app.Post("/dashboard", handlers.UserDashboard) // user dashboard page
+	app.Post("/dashboard",  handlers.UserDashboard) // user dashboard page
 	
 
-	app.Post("register", handlers.UserRegister) // user registration page
+	app.Post("register", middleware.AuthMiddleware, handlers.UserRegister) // user registration page
 
 
 	app.Get("/:id", handlers.RedirectLink)

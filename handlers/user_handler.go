@@ -1,16 +1,17 @@
 package handlers
 
-
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/C9b3rD3vi1/Burnr/models"
-	"github.com/C9b3rD3vi1/Burnr/database"
-	"golang.org/x/crypto/bcrypt"
-	"log"
-	"time"
 	"errors"
-	"gorm.io/gorm"
+	"log"
 	"strings"
+	"time"
+
+	"github.com/C9b3rD3vi1/Burnr/database"
+	"github.com/C9b3rD3vi1/Burnr/middleware"
+	"github.com/C9b3rD3vi1/Burnr/models"
+	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 // UserHandler handles user authentication and authorization and registering new users
@@ -121,6 +122,18 @@ func UserLogin(c *fiber.Ctx) error {
 		})
 		
 	}
+	// Set session or token
+	sess, err := middleware.Store.Get(c)
+	if err != nil {
+		log.Println("Error setting session cookie:", err)
+
+	}
+
+	sess.Set("userID", user.ID)
+	sess.Set("username", user.Username)
+	sess.Save()
+
+
 	// log the user in and redirect to dashboard
 	return c.Redirect("/dashboard")
 	
