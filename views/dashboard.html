@@ -10,12 +10,12 @@
   <link href="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/rippleui.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/rippleui.min.js"></script>
 
-  <!-- Charts -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-  <!-- Header -->
+  <!-- Navbar -->
   <div class="navbar bg-white shadow-sm px-4">
     <div class="navbar-start">
       <a href="/" class="text-2xl font-bold text-primary">Expirely</a>
@@ -26,6 +26,7 @@
     </div>
   </div>
 
+  <!-- Main Content -->
   <main class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-1">Welcome, {{ .User.Username }} 👋</h1>
     <p class="text-sm text-gray-600 mb-6">Email: {{ .User.Email }}</p>
@@ -85,24 +86,36 @@
             <tr class="hover">
               <td>
                 <a href="/{{ .Shortened }}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">
-                /{{ .Shortened }}
+                  /{{ .Shortened }}
                 </a>
               </td>
-              
               <td class="truncate max-w-xs">{{ .TargetURL }}</td>
               <td>{{ .Clicks }}</td>
               <td>{{ .CreatedAt.Format "Jan 2, 2006" }}</td>
-              <td><a href="/analytics/{{ .ID }}" class="btn btn-sm btn-outline">View</a></td>
+              <td>
+                <a href="/analytics/{{ .ID }}" class="btn btn-sm btn-outline">View</a>
+              </td>
             </tr>
             {{ end }}
           </tbody>
         </table>
       </div>
     </div>
+
+    <!-- Delete Expired Links Button -->
+    <div class="mt-8 text-right">
+      <button
+        id="deleteExpiredBtn"
+        class="btn btn-error text-white px-5 py-2 rounded hover:bg-red-700 transition"
+      >
+        Delete Expired Links
+      </button>
+    </div>
   </main>
 
-  <!-- Charts Script -->
+  <!-- Chart Scripts -->
   <script>
+    // Popular Links
     const popular = JSON.parse(`{{ .Stats.PopularLinks }}`);
     new Chart(document.getElementById('popularLinksChart'), {
       type: 'bar',
@@ -116,6 +129,7 @@
       }
     });
 
+    // Devices Chart
     const devicesObj = JSON.parse(`{{ .Stats.Devices }}`);
     new Chart(document.getElementById('devicesChart'), {
       type: 'doughnut',
@@ -128,6 +142,7 @@
       }
     });
 
+    // Countries Chart
     const countriesObj = JSON.parse(`{{ .Stats.Countries }}`);
     new Chart(document.getElementById('countriesChart'), {
       type: 'pie',
@@ -140,6 +155,7 @@
       }
     });
 
+    // Time Series Chart
     const timeSeries = JSON.parse(`{{ .Stats.ClicksOverTime }}`);
     new Chart(document.getElementById('timeSeriesChart'), {
       type: 'line',
@@ -156,6 +172,26 @@
         scales: {
           x: { type: 'category' }
         }
+      }
+    });
+
+    // Delete Expired Links AJAX
+    document.getElementById("deleteExpiredBtn").addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to delete all expired links?")) return;
+
+      try {
+        const response = await fetch("/links/expired", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) throw new Error("Failed to delete expired links.");
+
+        const result = await response.json();
+        alert(`✅ ${result.rows_affected} expired link(s) deleted.`);
+        location.reload();
+      } catch (err) {
+        alert("❌ Error: " + err.message);
       }
     });
   </script>
