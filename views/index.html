@@ -2,44 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Expirely - Temporary Link Generator</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans">
-  <div class="max-w-md mx-auto mt-20 bg-white p-8 rounded-xl shadow-lg">
-    <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">🔗 Expirely</h1>
-    <form id="linkForm" class="space-y-4">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 font-sans min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+    <h1 class="text-3xl font-extrabold text-center text-indigo-700 mb-2">🔗 Expirely</h1>
+    <p class="text-center text-sm text-gray-500 mb-6">Generate links that expire after time or clicks</p>
+    
+    <form id="linkForm" class="space-y-5">
       <div>
-        <label class="block text-sm font-medium text-gray-700">Target URL</label>
+        <label class="block text-sm font-medium text-gray-600 mb-1">🔍 Target URL</label>
         <input type="url" name="url" placeholder="https://example.com" required
-               class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-200" />
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent" />
       </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Max Clicks</label>
-        <input type="number" name="max_clicks" value="5" min="1"
-               class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-200" />
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1" for="max_clicks">📉 Max Clicks</label>
+          <input type="number" name="max_clicks" id="max_clicks" value="5" min="1" title="Maximum number of clicks allowed" placeholder="Enter max clicks"
+                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">⏱️ Expires In (Min)</label>
+          <input type="number" name="expire_min" value="60" min="1" title="Time in minutes until link expires" placeholder="Enter minutes"
+                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent" />
+        </div>
       </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Expires In (Minutes)</label>
-        <input type="number" name="expire_min" value="60" min="1"
-               class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-200" />
-      </div>
+
       <button type="submit"
-              class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
-        Generate Link
+              class="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-lg hover:bg-indigo-700 transition duration-150">
+        🚀 Generate Link
       </button>
     </form>
 
     <div id="result" class="mt-6 hidden">
-      <p class="text-gray-700 text-sm mb-2">Short URL:</p>
-      <div class="flex items-center">
-        <input id="shortUrl" readonly class="flex-1 px-3 py-2 border rounded-md" />
+      <p class="text-gray-700 text-sm mb-2 font-medium">🔗 Your Short URL:</p>
+      <div class="flex items-center gap-2">
+        <input id="shortUrl" readonly title="Generated short URL" placeholder="Generated URL will appear here" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-800" />
         <button onclick="copyLink()"
-                class="ml-2 bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 transition">
-          Copy
+                class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">
+          📋 Copy
         </button>
       </div>
-      <p id="copyMsg" class="text-xs text-green-600 mt-1 hidden">Copied!</p>
+      <p id="copyMsg" class="text-xs text-green-600 mt-1 hidden">✅ Copied to clipboard!</p>
     </div>
   </div>
 

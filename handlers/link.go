@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"log"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -65,12 +66,13 @@ func CreateLink(c *fiber.Ctx) error {
 
 // RedirectLink handles the redirection of a shortened link
 // It checks if the link exists, if it has expired, and if the max clicks have been reached
+
 func RedirectLink(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var link models.Link
 
 	// Prevent reserved paths from being treated as link IDs
-	if id == "admin"|| id =="register" || id == "login" || id == "dashboard" {
+	if id == "admin" || id == "register" || id == "login" || id == "dashboard" {
 		return c.Redirect(id)
 	}
 
@@ -86,36 +88,49 @@ func RedirectLink(c *fiber.Ctx) error {
 	link.Clicks++
 	database.DB.Save(&link)
 
-	// Save detailed click info
-	go SaveLinkClick(c) // Use go-routine to not block redirect
+	// Extract all necessary data BEFORE goroutine
+	clickData := struct {
+		LinkID    string
+		IP        string
+		Referer   string
+		UserAgent string
+	}{
+		LinkID:    id,
+		IP:        c.IP(),
+		Referer:   c.Get("Referer"),
+		UserAgent: c.Get("User-Agent"),
+	}
+
+	// Pass only the extracted data to the goroutine
+	go func(data struct {
+		LinkID    string
+		IP        string
+		Referer   string
+		UserAgent string
+	}) {
+		_ = SaveLinkClick(data.LinkID, data.IP, data.Referer, data.UserAgent)
+	}(clickData)
 
 	return c.Redirect(link.TargetURL)
 }
 
 
-func SaveLinkClick(c *fiber.Ctx)error{
-	id := c.Params("id")
-    if id == "" {
-        return c.Status(fiber.StatusBadRequest).SendString("Link ID is missing")
+func SaveLinkClick(linkID, ip, referer, userAgent string) error {
+	if linkID == "" {
+		return fmt.Errorf("Link ID is missing")
 	}
-
-	
-	ip := c.IP()
-	referer := c.Get("Referer")
-	userAgent := c.Get("User-Agent")
 
 	device := ParseUserAgent(userAgent)
 	country := LookupCountryByIP(ip)
 
 	// save clicks
 	clicks := models.LinkClick{
-		LinkID: id,
-		Time: time.Now(),
-		IP: ip,
-		Country: country,
+		LinkID:   linkID,
+		Time:     time.Now(),
+		IP:       ip,
+		Country:  country,
 		Referrer: referer,
-		Device: device,
-
+		Device:   device,
 	}
 
 	if err := database.DB.Create(&clicks).Error; err != nil {
@@ -123,7 +138,6 @@ func SaveLinkClick(c *fiber.Ctx)error{
 	}
 	return nil
 }
-
 
 
 func ParseUserAgent(ua string) string {
@@ -152,4 +166,20 @@ func LookupCountryByIP(ip string) string {
 	}
 
 	return result.Country
+}
+
+
+// delete link is expired
+func DeleteExpiredLinksHandler(c *fiber.Ctx) error {
+    now := time.Now()
+    result := database.DB.Where("expires_at IS NOT NULL AND expires_at < ?", now).Delete(&models.Link{})
+    if result.Error != nil {
+        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+            "error": "Failed to delete expired links",
+        })
+    }
+    return c.JSON(fiber.Map{
+        "message":        "Expired links deleted successfully",
+        "rows_affected":  result.RowsAffected,
+    })
 }

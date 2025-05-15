@@ -17,6 +17,7 @@ import (
 func main() {
 	// Initialize the Fiber app
 	engine := html.New("./views", ".html")
+	engine.Reload(true)
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
@@ -48,7 +49,7 @@ func main() {
 	app.Post("register", handlers.UserRegister) // user registration page
 
 
-	app.Get("/:id", handlers.RedirectLink, handlers.SaveLinkClick)
+	app.Get("/:id", handlers.RedirectLink)
 
 	
 

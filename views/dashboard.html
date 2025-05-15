@@ -2,166 +2,162 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>User Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css"/>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f8f9fa;
-    }
-    .container {
-      margin-top: 50px;
-    }
-    tr.clickable {
-      cursor: pointer;
-    }
+  <title>Dashboard - Expirely</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    .card-header {
-      background-color: #007bff;
-      color: white;
-    }
-    table th, table td {
-      text-align: center;
-      vertical-align: middle;
-    }
-    .countdown {
-      font-weight: bold;
-      color: #dc3545;
-    }
-    .form-control {
-      margin-bottom: 15px;
-    }
-    .alert {
-      margin-top: 10px;
-    }
-    .click-data-section {
-      margin-top: 30px;
-      border-top: 2px solid #007bff;
-      padding-top: 20px;
-    }
-  </style>
+  <!-- RippleUI -->
+  <link href="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/rippleui.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/rippleui.min.js"></script>
+
+  <!-- Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-  <div class="container">
-    <h1 class="text-center mb-4">User Dashboard</h1>
+<body class="bg-gray-50 text-gray-800">
 
-    <!-- User Info Card -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Welcome, {{ .user.Username }}</h2>
+  <!-- Header -->
+  <div class="navbar bg-white shadow-sm px-4">
+    <div class="navbar-start">
+      <a href="/" class="text-2xl font-bold text-primary">Expirely</a>
+    </div>
+    <div class="navbar-end space-x-2">
+      <a href="/" class="btn btn-ghost">Home</a>
+      <a href="/logout" class="btn btn-error btn-sm text-white">Logout</a>
+    </div>
+  </div>
+
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-1">Welcome, {{ .User.Username }} 👋</h1>
+    <p class="text-sm text-gray-600 mb-6">Email: {{ .User.Email }}</p>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div class="card bg-white p-4 shadow rounded-xl">
+        <h3 class="text-sm font-medium text-gray-500">Total Links</h3>
+        <p class="text-2xl font-bold text-primary">{{ .TotalLinks }}</p>
       </div>
-      <div class="card-body">
-        <p><strong>Email:</strong> {{ .user.Email }}</p>
-        <p><strong>Role:</strong> {{ .user.Role }}</p>
-        <a href="/logout" class="btn btn-danger">Logout</a>
+      <div class="card bg-white p-4 shadow rounded-xl">
+        <h3 class="text-sm font-medium text-gray-500">Total Clicks</h3>
+        <p class="text-2xl font-bold text-green-600">{{ .Stats.TotalClicks }}</p>
+      </div>
+      <div class="card bg-white p-4 shadow rounded-xl">
+        <h3 class="text-sm font-medium text-gray-500">Clicks Today</h3>
+        <p class="text-2xl font-bold text-indigo-600">{{ .Stats.ClicksToday }}</p>
       </div>
     </div>
 
-    <!-- Success/Error Message -->
-    {{ if .error }}
-      <div class="alert alert-danger">{{ .error }}</div>
-    {{ end }}
-    {{ if .success }}
-      <div class="alert alert-success">{{ .success }}</div>
-    {{ end }}
-
-    <!-- New Link Form -->
-    <div class="card mt-4">
-      <div class="card-header">
-        <h4>Create New Expiry Link</h4>
+    <!-- Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+      <div class="card bg-white p-4 shadow rounded-xl">
+        <h3 class="text-lg font-semibold mb-4">Top Links</h3>
+        <canvas id="popularLinksChart" class="h-64"></canvas>
       </div>
-      <div class="card-body">
-        <form action="/create-link" method="POST">
-          <input type="url" name="target_url" class="form-control" placeholder="Target URL (e.g., https://example.com)" required>
-          <input type="number" name="expiry_minutes" class="form-control" placeholder="Expires after (minutes)" required min="1">
-          <button type="submit" class="btn btn-primary">Generate Link</button>
-        </form>
+      <div class="card bg-white p-4 shadow rounded-xl">
+        <h3 class="text-lg font-semibold mb-4">Devices</h3>
+        <canvas id="devicesChart" class="h-64"></canvas>
+      </div>
+      <div class="card bg-white p-4 shadow rounded-xl">
+        <h3 class="text-lg font-semibold mb-4">Countries</h3>
+        <canvas id="countriesChart" class="h-64"></canvas>
+      </div>
+      <div class="card bg-white p-4 shadow rounded-xl">
+        <h3 class="text-lg font-semibold mb-4">Clicks Over Time</h3>
+        <canvas id="timeSeriesChart" class="h-64"></canvas>
       </div>
     </div>
 
-    <!-- User Links Table -->
-    <div class="card mt-4">
-      <div class="card-header">
-        <h4>Your Expiring Links</h4>
-      </div>
-      <div class="card-body">
-        {{ if .user.Links }}
-        <table class="table table-striped table-bordered">
-          <thead class="thead-dark">
+    <!-- Links Table -->
+    <div class="card bg-white p-6 shadow rounded-xl">
+      <h2 class="text-xl font-semibold mb-4">Your Links</h2>
+      <div class="overflow-x-auto">
+        <table class="table w-full text-sm">
+          <thead class="bg-gray-100">
             <tr>
-              <th>Shortened URL</th>
-              <th>Original URL</th>
+              <th>Short URL</th>
+              <th>Destination</th>
               <th>Clicks</th>
-              <th>Expires In</th>
+              <th>Created</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {{ range .user.Links }}
-            <tr data-toggle="collapse" data-target="#details-{{ .ID }}" class="clickable">
-              <td><a href="/{{ .ID }}" target="_blank">/{{ .ID }}</a></td>
-              <td>{{ .TargetURL }}</td>
-              <td>{{ .Clicks }}</td>
-              <td class="countdown" data-expiry="{{ .ExpiresAt }}"></td>
-            </tr>
-            <tr class="collapse" id="details-{{ .ID }}">
-              <td colspan="4">
-                <strong>Click Details:</strong>
-                {{ if index $.clickData .ID }}
-                  <ul class="list-unstyled">
-                    {{ range index $.clickData .ID }}
-                      <li>
-                        <strong>{{ .Time.Format "2006-01-02 15:04:05" }}</strong> —
-                        IP: {{ .IP }}, Country: {{ .Country }},
-                        Device: {{ .Device }}, Referrer: {{ .Referrer }}
-                      </li>
-                    {{ end }}
-                  </ul>
-                {{ else }}
-                  <em>No click data available.</em>
-                {{ end }}
+            {{ range .Links }}
+            <tr class="hover">
+              <td>
+                <a href="/{{ .Shortened }}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">
+                /{{ .Shortened }}
+                </a>
               </td>
+              
+              <td class="truncate max-w-xs">{{ .TargetURL }}</td>
+              <td>{{ .Clicks }}</td>
+              <td>{{ .CreatedAt.Format "Jan 2, 2006" }}</td>
+              <td><a href="/analytics/{{ .ID }}" class="btn btn-sm btn-outline">View</a></td>
             </tr>
             {{ end }}
           </tbody>
         </table>
-        {{ else }}
-        <p class="text-center">You have no links yet.</p>
-        {{ end }}
       </div>
     </div>
+  </main>
 
-    <!-- ====================== Click Data Section ====================== -->
-    <div class="click-data-section">
-      <h4>Click Data Analysis</h4>
-      <p>View the click data for each of your links in the table above. Click on the link to view more details.</p>
-    </div>
-  </div>
-
+  <!-- Charts Script -->
   <script>
-    function updateCountdowns() {
-      const rows = document.querySelectorAll(".countdown");
-      rows.forEach(cell => {
-        const expiry = new Date(cell.getAttribute("data-expiry"));
-        const now = new Date();
-        const diff = expiry - now;
-        if (diff <= 0) {
-          cell.textContent = "Expired";
-          cell.classList.remove("text-success");
-          cell.classList.add("text-danger");
-        } else {
-          const seconds = Math.floor(diff / 1000) % 60;
-          const minutes = Math.floor(diff / (1000 * 60)) % 60;
-          const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
-          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-          cell.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-        }
-      });
-    }
+    const popular = JSON.parse(`{{ .Stats.PopularLinks }}`);
+    new Chart(document.getElementById('popularLinksChart'), {
+      type: 'bar',
+      data: {
+        labels: popular.map(link => link.Shortened),
+        datasets: [{
+          label: 'Clicks',
+          data: popular.map(link => link.Clicks),
+          backgroundColor: '#6366f1'
+        }]
+      }
+    });
 
-    setInterval(updateCountdowns, 1000);
-    updateCountdowns();
+    const devicesObj = JSON.parse(`{{ .Stats.Devices }}`);
+    new Chart(document.getElementById('devicesChart'), {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(devicesObj),
+        datasets: [{
+          data: Object.values(devicesObj),
+          backgroundColor: ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
+        }]
+      }
+    });
+
+    const countriesObj = JSON.parse(`{{ .Stats.Countries }}`);
+    new Chart(document.getElementById('countriesChart'), {
+      type: 'pie',
+      data: {
+        labels: Object.keys(countriesObj),
+        datasets: [{
+          data: Object.values(countriesObj),
+          backgroundColor: ['#0ea5e9', '#ec4899', '#f97316', '#84cc16', '#6366f1']
+        }]
+      }
+    });
+
+    const timeSeries = JSON.parse(`{{ .Stats.ClicksOverTime }}`);
+    new Chart(document.getElementById('timeSeriesChart'), {
+      type: 'line',
+      data: {
+        labels: Object.keys(timeSeries),
+        datasets: [{
+          label: 'Clicks',
+          data: Object.values(timeSeries),
+          borderColor: '#3b82f6',
+          fill: false
+        }]
+      },
+      options: {
+        scales: {
+          x: { type: 'category' }
+        }
+      }
+    });
   </script>
 </body>
 </html>

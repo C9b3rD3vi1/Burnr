@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ block "title" . }}Expirely{{ end }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- RippleUI -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/rippleui.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/rippleui.min.js"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen font-sans flex flex-col">
+
+  <!-- Navbar -->
+  <div class="navbar bg-white shadow-md">
+    <div class="navbar-start">
+      <a href="/" class="text-2xl font-bold text-primary">Expirely</a>
+    </div>
+    <div class="navbar-end space-x-2">
+      <a href="/" class="btn btn-ghost">Home</a>
+      <a href="/dashboard" class="btn btn-ghost">About</a>
+    </div>
+  </div>
+
+  <!-- Page Content -->
+  <main class="container mx-auto flex-grow px-4 py-10">
+    {{ block "content" . }}{{ end }}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t text-sm text-center text-gray-500 py-4 mt-12">
+    &copy; {{ .Year }} Expirely. All rights reserved.
+  </footer>
+
+</body>
+</html>
