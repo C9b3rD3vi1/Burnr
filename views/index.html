@@ -1,83 +1,185 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="transition duration-300">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Expirely - Temporary Link Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Tailwind dark mode support
+    tailwind.config = {
+      darkMode: 'class',
+    };
+  </script>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 font-sans min-h-screen flex items-center justify-center">
-  <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
-    <h1 class="text-3xl font-extrabold text-center text-indigo-700 mb-2">🔗 Expirely</h1>
-    <p class="text-center text-sm text-gray-500 mb-6">Generate links that expire after time or clicks</p>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 transition duration-300">
+
+  <!-- Theme Toggle Button -->
+  <div class="absolute top-4 right-4">
+    <button onclick="toggleTheme()" class="text-sm px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg shadow hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+      🌙 Toggle Theme
+    </button>
+  </div>
+
+  <!-- Main Container -->
+  <div class="w-full max-w-md mx-auto bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mt-24">
+    <h1 class="text-3xl font-extrabold text-center text-indigo-700 dark:text-indigo-400 mb-2">🔗 Expirely</h1>
+    <p class="text-center text-sm text-gray-500 dark:text-gray-300 mb-6">Generate links that expire after time or clicks</p>
     
+    <!-- Link Form -->
     <form id="linkForm" class="space-y-5">
       <div>
-        <label class="block text-sm font-medium text-gray-600 mb-1">🔍 Target URL</label>
+        <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">🔍 Target URL</label>
         <input type="url" name="url" placeholder="https://example.com" required
-               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent" />
+               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+      </div>
+
+      <!-- Optional Slug -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">✏️ Custom Slug (optional)</label>
+        <input type="text" name="slug" placeholder="my-custom-link" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg" />
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1" for="max_clicks">📉 Max Clicks</label>
-          <input type="number" name="max_clicks" id="max_clicks" value="5" min="1" title="Maximum number of clicks allowed" placeholder="Enter max clicks"
-                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent" />
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">📉 Max Clicks</label>
+          <input type="number" name="max_clicks" value="5" min="1"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg" />
         </div>
-
         <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1">⏱️ Expires In (Min)</label>
-          <input type="number" name="expire_min" value="60" min="1" title="Time in minutes until link expires" placeholder="Enter minutes"
-                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent" />
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">⏱️ Expires In (Min)</label>
+          <input type="number" name="expire_min" value="60" min="1"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg" />
         </div>
       </div>
 
       <button type="submit"
-              class="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-lg hover:bg-indigo-700 transition duration-150">
+              class="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-lg hover:bg-indigo-700 transition">
         🚀 Generate Link
       </button>
     </form>
 
+    <!-- Short URL Result -->
     <div id="result" class="mt-6 hidden">
-      <p class="text-gray-700 text-sm mb-2 font-medium">🔗 Your Short URL:</p>
+      <p class="text-gray-700 dark:text-gray-200 text-sm mb-2 font-medium">🔗 Your Short URL:</p>
       <div class="flex items-center gap-2">
-        <input id="shortUrl" readonly title="Generated short URL" placeholder="Generated URL will appear here" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-800" />
-        <button onclick="copyLink()"
-                class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">
+        <input id="shortUrl" readonly class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-gray-800 dark:text-white" />
+        <button onclick="copyLink()" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">
           📋 Copy
         </button>
       </div>
       <p id="copyMsg" class="text-xs text-green-600 mt-1 hidden">✅ Copied to clipboard!</p>
     </div>
+
+     <!-- QR Code -->
+  <div class="mt-4 text-center">
+    <p class="text-sm font-medium mb-2">📱 Scan QR Code:</p>
+    <div id="qrcode" class="mx-auto"></div>
   </div>
 
-  <script>
-    document.getElementById('linkForm').onsubmit = async function (e) {
-      e.preventDefault();
-      const form = new FormData(e.target);
-      const res = await fetch("/create", {
-        method: "POST",
-        body: JSON.stringify({
-          url: form.get("url"),
-          max_clicks: parseInt(form.get("max_clicks")),
-          expire_min: parseInt(form.get("expire_min"))
-        }),
-        headers: { "Content-Type": "application/json" }
-      });
-      const data = await res.json();
-      const shortUrl = document.getElementById("shortUrl");
-      shortUrl.value = data.short_url;
-      document.getElementById("result").classList.remove("hidden");
-      document.getElementById("copyMsg").classList.add("hidden");
-    };
+  </div>
 
-    function copyLink() {
-      const url = document.getElementById("shortUrl");
-      url.select();
-      url.setSelectionRange(0, 99999);
-      document.execCommand("copy");
-      document.getElementById("copyMsg").classList.remove("hidden");
+  <!-- Features Section -->
+  <div class="max-w-5xl mx-auto text-center mt-20 px-4">
+    <h2 class="text-2xl font-bold text-indigo-700 dark:text-indigo-400 mb-6">✨ Why Use Expirely?</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm text-gray-700 dark:text-gray-200">
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow border border-gray-100 dark:border-gray-700">⏳ <strong>Timed Expiry</strong><br> Set link lifespan in minutes.</div>
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow border border-gray-100 dark:border-gray-700">📈 <strong>Click-Based Expiry</strong><br> Delete after max clicks.</div>
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow border border-gray-100 dark:border-gray-700">🔒 <strong>Secure & Private</strong><br> No ads, no tracking.</div>
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow border border-gray-100 dark:border-gray-700">📊 <strong>Analytics Dashboard</strong><br> See clicks, devices & locations.</div>
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow border border-gray-100 dark:border-gray-700">🔄 <strong>Auto Cleanup</strong><br> Expired links get purged.</div>
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow border border-gray-100 dark:border-gray-700">🔗 <strong>Custom Slugs</strong><br> Create human-readable links.</div>
+    </div>
+  </div>
+
+  <!-- Pricing Section -->
+  <div class="max-w-4xl mx-auto mt-20 px-4 text-center">
+    <h2 class="text-2xl font-bold text-indigo-700 dark:text-indigo-400 mb-6">💼 Plans & Pricing</h2>
+    <div class="grid sm:grid-cols-2 gap-6">
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-100 dark:border-gray-700">
+        <h3 class="text-xl font-semibold mb-2">Free Plan</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-300 mb-4">For personal use</p>
+        <ul class="text-left text-sm space-y-1 mb-4">
+          <li>✅ Up to 10 links/day</li>
+          <li>✅ 1-day expiry</li>
+          <li>✅ Max 10 clicks</li>
+        </ul>
+        <button class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition">Start Free</button>
+      </div>
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-indigo-500 dark:border-indigo-400 ring-2 ring-indigo-400">
+        <h3 class="text-xl font-semibold mb-2">Pro Plan</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-300 mb-4">For power users</p>
+        <ul class="text-left text-sm space-y-1 mb-4">
+          <li>🚀 Unlimited links</li>
+          <li>📊 Full analytics</li>
+          <li>🔐 Password protection (soon)</li>
+        </ul>
+        <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">Upgrade</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Section -->
+  <script>
+  // Toggle Light/Dark Mode
+  function toggleTheme() {
+    document.documentElement.classList.toggle("dark");
+    localStorage.setItem("theme", document.documentElement.classList.contains("dark") ? "dark" : "light");
+  }
+
+  // Auto-apply saved theme
+  if (localStorage.getItem("theme") === "dark") {
+    document.documentElement.classList.add("dark");
+  }
+
+  // Handle link form submit
+  document.getElementById('linkForm').onsubmit = async function (e) {
+    e.preventDefault();
+    const form = new FormData(e.target);
+    const payload = {
+      url: form.get("url"),
+      max_clicks: parseInt(form.get("max_clicks") || "0"),
+      expire_min: parseInt(form.get("expire_min") || "0"),
+    };
+    if (form.get("slug")) payload.slug = form.get("slug");
+
+    const res = await fetch("/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    const shortUrl = document.getElementById("shortUrl");
+    shortUrl.value = data.short_url || "Error generating URL";
+    document.getElementById("result").classList.remove("hidden");
+    document.getElementById("copyMsg").classList.add("hidden");
+
+    // Generate QR code
+    const qrContainer = document.getElementById("qrcode");
+    qrContainer.innerHTML = ""; // Clear previous QR
+    if (data.short_url) {
+      new QRCode(qrContainer, {
+        text: data.short_url,
+        width: 160,
+        height: 160,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H,
+      });
     }
-  </script>
+  };
+
+  // Copy to clipboard
+  function copyLink() {
+    const url = document.getElementById("shortUrl");
+    url.select();
+    url.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    document.getElementById("copyMsg").classList.remove("hidden");
+  }
+</script>
+
 </body>
 </html>
