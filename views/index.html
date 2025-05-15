@@ -44,12 +44,12 @@
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">📉 Max Clicks</label>
-          <input type="number" name="max_clicks" value="5" min="1"
+          <input type="number" name="max_clicks" value="5" min="1" title="Set maximum number of clicks" placeholder="Enter max clicks"
                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg" />
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">⏱️ Expires In (Min)</label>
-          <input type="number" name="expire_min" value="60" min="1"
+          <input type="number" name="expire_min" value="60" min="1" title="Set expiration time in minutes" placeholder="Enter minutes"
                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg" />
         </div>
       </div>
@@ -64,7 +64,8 @@
     <div id="result" class="mt-6 hidden">
       <p class="text-gray-700 dark:text-gray-200 text-sm mb-2 font-medium">🔗 Your Short URL:</p>
       <div class="flex items-center gap-2">
-        <input id="shortUrl" readonly class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-gray-800 dark:text-white" />
+        <label for="shortUrl" class="sr-only">Generated short URL</label>
+        <input id="shortUrl" title="Generated short URL" placeholder="Generated URL will appear here" readonly class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-gray-800 dark:text-white" />
         <button onclick="copyLink()" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition">
           📋 Copy
         </button>
@@ -94,31 +95,46 @@
   </div>
 
   <!-- Pricing Section -->
-  <div class="max-w-4xl mx-auto mt-20 px-4 text-center">
-    <h2 class="text-2xl font-bold text-indigo-700 dark:text-indigo-400 mb-6">💼 Plans & Pricing</h2>
-    <div class="grid sm:grid-cols-2 gap-6">
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-100 dark:border-gray-700">
-        <h3 class="text-xl font-semibold mb-2">Free Plan</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-300 mb-4">For personal use</p>
-        <ul class="text-left text-sm space-y-1 mb-4">
-          <li>✅ Up to 10 links/day</li>
-          <li>✅ 1-day expiry</li>
-          <li>✅ Max 10 clicks</li>
-        </ul>
-        <button class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition">Start Free</button>
-      </div>
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-indigo-500 dark:border-indigo-400 ring-2 ring-indigo-400">
-        <h3 class="text-xl font-semibold mb-2">Pro Plan</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-300 mb-4">For power users</p>
-        <ul class="text-left text-sm space-y-1 mb-4">
-          <li>🚀 Unlimited links</li>
-          <li>📊 Full analytics</li>
-          <li>🔐 Password protection (soon)</li>
-        </ul>
-        <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">Upgrade</button>
-      </div>
-    </div>
+  <section class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white py-20 px-6">
+  <div class="max-w-5xl mx-auto text-center mb-16">
+    <h2 class="text-4xl font-bold text-indigo-700 dark:text-indigo-300 mb-4">💼 Plans & Pricing</h2>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Choose a plan that fits your needs. Cancel anytime.</p>
   </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+    
+    <!-- Free Plan -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 hover:shadow-xl transition">
+      <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 mb-2">Free Plan</h3>
+      <p class="text-sm text-gray-500 dark:text-gray-300 mb-6">Perfect for personal use or testing</p>
+      <ul class="text-sm space-y-3 text-left text-gray-700 dark:text-gray-200 mb-6">
+        <li>✅ Create up to <strong>10 links/day</strong></li>
+        <li>⏱️ Max 1-day expiry</li>
+        <li>📉 Up to 50 clicks</li>
+        <li>📱 QR Code generation</li>
+        <li>🚫 No analytics</li>
+      </ul>
+      <button class="w-full bg-indigo-600 text-white py-2.5 rounded-lg hover:bg-indigo-700 transition">Start Free</button>
+    </div>
+
+    <!-- Pro Plan -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-indigo-400 ring-2 ring-indigo-400 dark:ring-indigo-300 p-8 relative overflow-hidden hover:scale-[1.02] transition">
+      <span class="absolute top-0 right-0 bg-indigo-600 text-white text-xs px-3 py-1 rounded-bl-lg">Popular</span>
+      <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 mb-2">Pro Plan</h3>
+      <p class="text-sm text-gray-500 dark:text-gray-300 mb-6">Ideal for developers and businesses</p>
+      <ul class="text-sm space-y-3 text-left text-gray-700 dark:text-gray-200 mb-6">
+        <li>🚀 <strong>Unlimited</strong> link generation</li>
+        <li>⏱️ Custom expiry duration (minutes, hours, days)</li>
+        <li>📈 Full analytics dashboard</li>
+        <li>🔒 Password protection (coming soon)</li>
+        <li>🔗 Custom slug and QR code</li>
+      </ul>
+      <button class="w-full bg-indigo-700 text-white py-2.5 rounded-lg hover:bg-indigo-800 transition">Upgrade to Pro</button>
+    </div>
+
+  </div>
+</section>
+
 
   <!-- FAQ Section -->
 <div class="max-w-4xl mx-auto mt-24 px-6">

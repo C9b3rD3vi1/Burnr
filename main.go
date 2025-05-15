@@ -39,6 +39,9 @@ func main() {
 		return c.Render("login", fiber.Map{})
 	})
 	app.Post("/login", handlers.UserLogin) // login page
+
+	app.Get("price", handlers.UserPriceHandler)
+
 	app.Get("/logout", handlers.UserLogout) // logout page
 
 	app.Get("/dashboard", handlers.UserDashboard) // user dashboard page

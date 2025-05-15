@@ -72,7 +72,7 @@ func RedirectLink(c *fiber.Ctx) error {
 	var link models.Link
 
 	// Prevent reserved paths from being treated as link IDs
-	if id == "admin" || id == "register" || id == "login" || id == "dashboard" {
+	if id == "admin" || id == "register" || id == "login" || id =="price" || id == "dashboard" {
 		return c.Redirect(id)
 	}
 

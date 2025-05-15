@@ -10,6 +10,7 @@ import (
 func AuthMiddleware(c *fiber.Ctx) error {
 	// Get user ID from session
 	sess, err := Store.Get(c)
+	
 	if err != nil {
 		log.Println("Error getting session:", err)
 		return c.Redirect("/login")
