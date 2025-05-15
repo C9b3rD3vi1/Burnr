@@ -5,12 +5,7 @@
   <title>Dashboard - Expirely</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- RippleUI -->
   <link href="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/rippleui.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/rippleui.min.js"></script>
-
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -83,7 +78,7 @@
           </thead>
           <tbody>
             {{ range .Links }}
-            <tr class="hover">
+            <tr class="hover" data-link-id="{{ .ID }}">
               <td>
                 <a href="/{{ .Shortened }}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">
                   /{{ .Shortened }}
@@ -102,11 +97,11 @@
       </div>
     </div>
 
-    <!-- Delete Expired Links Button -->
+    <!-- Delete Expired Links -->
     <div class="mt-8 text-right">
       <button
         id="deleteExpiredBtn"
-        class="btn btn-error text-white px-5 py-2 rounded hover:bg-red-700 transition"
+        class="btn btn-error bg-gray-100 px-5 py-2 rounded hover:bg-red-700 transition"
       >
         Delete Expired Links
       </button>
@@ -115,7 +110,7 @@
 
   <!-- Chart Scripts -->
   <script>
-    // Popular Links
+    // Top Links Chart
     const popular = JSON.parse(`{{ .Stats.PopularLinks }}`);
     new Chart(document.getElementById('popularLinksChart'), {
       type: 'bar',
@@ -175,21 +170,29 @@
       }
     });
 
-    // Delete Expired Links AJAX
+    // Delete expired links
     document.getElementById("deleteExpiredBtn").addEventListener("click", async () => {
       if (!confirm("Are you sure you want to delete all expired links?")) return;
 
       try {
         const response = await fetch("/links/expired", {
           method: "DELETE",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json" }
         });
 
         if (!response.ok) throw new Error("Failed to delete expired links.");
 
         const result = await response.json();
         alert(`✅ ${result.rows_affected} expired link(s) deleted.`);
-        location.reload();
+
+        // Remove rows from DOM
+        if (Array.isArray(result.ids)) {
+          result.ids.forEach(id => {
+            const row = document.querySelector(`tr[data-link-id='${id}']`);
+            if (row) row.remove();
+          });
+        }
+
       } catch (err) {
         alert("❌ Error: " + err.message);
       }

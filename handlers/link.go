@@ -169,17 +169,56 @@ func LookupCountryByIP(ip string) string {
 }
 
 
-// delete link is expired
 func DeleteExpiredLinksHandler(c *fiber.Ctx) error {
-    now := time.Now()
-    result := database.DB.Where("expires_at IS NOT NULL AND expires_at < ?", now).Delete(&models.Link{})
-    if result.Error != nil {
-        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-            "error": "Failed to delete expired links",
-        })
-    }
-    return c.JSON(fiber.Map{
-        "message":        "Expired links deleted successfully",
-        "rows_affected":  result.RowsAffected,
-    })
+	now := time.Now()
+
+	// Fetch expired links first
+	var expiredLinks []models.Link
+	if err := database.DB.
+		Where("expires_at IS NOT NULL AND expires_at < ?", now).
+		Find(&expiredLinks).Error; err != nil {
+		log.Println("Error fetching expired links:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to fetch expired links",
+		})
+	}
+
+	if len(expiredLinks) == 0 {
+		return c.JSON(fiber.Map{
+			"message":       "No expired links found",
+			"rows_affected": 0,
+			"ids":           []string{},
+		})
+	}
+
+	// Collect IDs for front-end removal
+	var ids []string
+	for _, link := range expiredLinks {
+		if link.ID != "" {
+			ids = append(ids, link.ID)
+		}
+	}
+
+	// Check if any valid IDs were collected
+	if len(ids) == 0 {
+		return c.JSON(fiber.Map{
+			"message":       "No valid expired links found for deletion",
+			"rows_affected": 0,
+			"ids":           []string{},
+		})
+	}
+
+	// Delete expired links
+	if err := database.DB.Delete(&expiredLinks).Error; err != nil {
+		log.Println("Error deleting expired links:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to delete expired links",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message":       "Expired links deleted successfully",
+		"rows_affected": len(expiredLinks),
+		"ids":           ids,
+	})
 }

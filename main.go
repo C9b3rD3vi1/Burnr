@@ -48,7 +48,7 @@ func main() {
 
 	app.Post("register", handlers.UserRegister) // user registration page
 
-	app.Delete("/links/expired", handlers.DeleteExpiredLinksHandler)
+	app.Delete("/links/expired",middleware.AuthMiddleware, handlers.DeleteExpiredLinksHandler)
 
 
 	app.Get("/:id", handlers.RedirectLink)
