@@ -120,6 +120,40 @@
     </div>
   </div>
 
+  <!-- FAQ Section -->
+<div class="max-w-4xl mx-auto mt-24 px-6">
+  <h2 class="text-2xl font-bold text-indigo-700 dark:text-indigo-400 mb-4">❓ Frequently Asked Questions</h2>
+  <div class="space-y-4 text-sm text-gray-700 dark:text-gray-300">
+    <div><strong>How long do links last?</strong><br>As long as the expiration time or max clicks allow.</div>
+    <div><strong>Can I delete links manually?</strong><br>Expired links are automatically removed. Manual deletion is coming soon.</div>
+    <div><strong>Is there any tracking?</strong><br>No. We respect your privacy—no ads, no trackers.</div>
+  </div>
+</div>
+
+<!-- Roadmap / Changelog -->
+<div class="max-w-4xl mx-auto mt-24 px-6">
+  <h2 class="text-2xl font-bold text-indigo-700 dark:text-indigo-400 mb-4">🚀 Roadmap & Changelog</h2>
+  <ul class="list-disc pl-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+    <li><strong>[✔️] v1.0:</strong> Basic link generation with expiry/click limits</li>
+    <li><strong>[✔️] v1.1:</strong> Custom slugs and QR codes</li>
+    <li><strong>[🛠️] v1.2:</strong> Analytics dashboard (in progress)</li>
+    <li><strong>[🔜] v2.0:</strong> Password protection, API access, user accounts</li>
+  </ul>
+</div>
+
+<!-- Contact Section -->
+<div class="max-w-xl mx-auto mt-24 px-6 text-center">
+  <h2 class="text-2xl font-bold text-indigo-700 dark:text-indigo-400 mb-2">📬 Contact Us</h2>
+  <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Have questions, feedback, or want to collaborate?</p>
+  <a href="mailto:support@expirely.app" class="text-indigo-600 dark:text-indigo-300 underline">support@expirely.app</a>
+</div>
+
+<!-- Footer -->
+<footer class="mt-24 text-center text-xs text-gray-400 dark:text-gray-600 py-6">
+  © 2025 <strong>Expirely</strong> — Built with ❤️ by <a href="https://cyberlocktech.com" class="underline hover:text-indigo-500">C9b3rD3vi1</a>
+</footer>
+
+
   <!-- Script Section -->
   <script>
   // Toggle Light/Dark Mode
@@ -133,6 +167,20 @@
     document.documentElement.classList.add("dark");
   }
 
+  // Toast Notification
+  function showToast(message, success = true) {
+    const toast = document.createElement("div");
+    toast.textContent = message;
+    toast.className = `fixed bottom-6 right-6 px-4 py-2 rounded shadow-lg z-50 text-sm font-medium transition
+      ${success ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add("opacity-0", "translate-y-2");
+      setTimeout(() => toast.remove(), 500);
+    }, 2500);
+  }
+
   // Handle link form submit
   document.getElementById('linkForm').onsubmit = async function (e) {
     e.preventDefault();
@@ -144,30 +192,42 @@
     };
     if (form.get("slug")) payload.slug = form.get("slug");
 
-    const res = await fetch("/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const res = await fetch("/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    const data = await res.json();
-    const shortUrl = document.getElementById("shortUrl");
-    shortUrl.value = data.short_url || "Error generating URL";
-    document.getElementById("result").classList.remove("hidden");
-    document.getElementById("copyMsg").classList.add("hidden");
+      const data = await res.json();
+      if (!data.short_url) throw new Error("Invalid response");
 
-    // Generate QR code
-    const qrContainer = document.getElementById("qrcode");
-    qrContainer.innerHTML = ""; // Clear previous QR
-    if (data.short_url) {
+      const shortUrl = document.getElementById("shortUrl");
+      shortUrl.value = data.short_url;
+      document.getElementById("result").classList.remove("hidden");
+
+      // Generate QR code
+      const qrContainer = document.getElementById("qrcode");
+      qrContainer.innerHTML = "";
       new QRCode(qrContainer, {
         text: data.short_url,
-        width: 160,
+        width: 200,
         height: 160,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H,
       });
+
+      // Reset form
+      e.target.reset();
+
+      // Clear previous copy message
+      document.getElementById("copyMsg").classList.add("hidden");
+
+      // Toast
+      showToast("✅ Link created successfully!");
+    } catch (err) {
+      showToast("❌ Failed to generate link.", false);
     }
   };
 
@@ -178,8 +238,10 @@
     url.setSelectionRange(0, 99999);
     document.execCommand("copy");
     document.getElementById("copyMsg").classList.remove("hidden");
+    showToast("🔗 Link copied to clipboard!");
   }
 </script>
+
 
 </body>
 </html>
