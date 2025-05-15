@@ -171,32 +171,31 @@
     });
 
     // Delete expired links
-    document.getElementById("deleteExpiredBtn").addEventListener("click", async () => {
-      if (!confirm("Are you sure you want to delete all expired links?")) return;
+  document.getElementById("deleteExpiredBtn").addEventListener("click", async () => {
+    if (!confirm("Are you sure you want to delete all expired links?")) return;
 
-      try {
-        const response = await fetch("/links/expired", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" }
-        });
+    try {
+      const response = await fetch("/links/expired", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
 
-        if (!response.ok) throw new Error("Failed to delete expired links.");
+      if (!response.ok) throw new Error("Failed to delete expired links.");
+      const result = await response.json();
 
-        const result = await response.json();
-        alert(`✅ ${result.rows_affected} expired link(s) deleted.`);
+      alert(`✅ ${result.rows_affected} expired link(s) deleted.`);
 
-        // Remove rows from DOM
-        if (Array.isArray(result.ids)) {
-          result.ids.forEach(id => {
-            const row = document.querySelector(`tr[data-link-id='${id}']`);
-            if (row) row.remove();
-          });
-        }
+      // Remove deleted rows from table
+      result.ids.forEach((id) => {
+        const row = document.querySelector(`tr[data-id='${id}']`);
+        if (row) row.remove();
+      });
 
-      } catch (err) {
-        alert("❌ Error: " + err.message);
-      }
-    });
-  </script>
+    } catch (err) {
+      alert("❌ Error: " + err.message);
+    }
+  });
+</script>
+
 </body>
 </html>
