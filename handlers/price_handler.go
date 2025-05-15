@@ -27,13 +27,20 @@ func UserPriceHandler(c *fiber.Ctx) error {
 		return c.Status(500).SendString("User not found")
 	}
 
-	// Fetch pricing
-	var pricing []models.Pricing
-	if err := database.DB.Find(&pricing).Error; err != nil {
-		return c.Status(500).SendString("Could not fetch pricing")
+	type request struct {
+		Email string `json:"email"`
+		Plan  string `json:"plan"` // "monthly" or "yearly"
 	}
 
+	var body request
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
 
+	url, err := middleware.CreateCheckoutSession(body.Email, body.Plan)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Could not create session"})
+	}
 
-	return c.Render("price", fiber.Map{})
+	return c.JSON(fiber.Map{"checkout_url": url})
 }

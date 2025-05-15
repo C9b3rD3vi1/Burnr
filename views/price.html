@@ -1,5 +1,138 @@
-A toggle between Monthly/Yearly prices?
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expirely - Pricing</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    };
+  </script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white transition duration-300">
 
-A modal-based checkout?
+  <!-- Header -->
+  <header class="w-full shadow-sm bg-white dark:bg-gray-900 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-indigo-600 dark:text-indigo-400">🔗 Expirely</h1>
+      <nav class="space-x-4 text-sm font-medium">
+        <a href="/" class="hover:text-indigo-600">Home</a>
+        <a href="/features" class="hover:text-indigo-600">Features</a>
+        <a href="/pricing" class="text-indigo-600 font-semibold">Pricing</a>
+        <a href="/contact" class="hover:text-indigo-600">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-Add Stripe/PayPal button placeholders?
+  <!-- Pricing Section -->
+  <section class="py-20 px-6">
+    <div class="max-w-5xl mx-auto text-center mb-10">
+      <h2 class="text-4xl font-bold text-indigo-700 dark:text-indigo-300 mb-4">💼 Plans & Pricing</h2>
+      <p class="text-lg text-gray-600 dark:text-gray-400">Choose the plan that works for you. Simple & transparent.</p>
+    </div>
+
+    <!-- Toggle -->
+    <div class="flex justify-center mb-10">
+      <div class="bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex text-sm font-medium">
+        <button id="monthlyBtn" class="px-4 py-2 rounded-full bg-indigo-600 text-white">Monthly</button>
+        <button id="yearlyBtn" class="px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:text-indigo-600">Yearly</button>
+      </div>
+    </div>
+
+    <!-- Plans -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+      <!-- Free Plan -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 mb-2">Free</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-300 mb-6">Start with the basics</p>
+        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-200 mb-6 text-left">
+          <li>✅ 10 links/day</li>
+          <li>⏱️ 1-day expiry</li>
+          <li>📉 50 clicks</li>
+          <li>📱 QR Code</li>
+        </ul>
+        <button class="w-full bg-indigo-600 text-white py-2.5 rounded-lg hover:bg-indigo-700 transition">Start Free</button>
+      </div>
+
+      <!-- Pro Plan -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-indigo-400 ring-2 ring-indigo-400 dark:ring-indigo-300 p-8 relative">
+        <span class="absolute top-0 right-0 bg-indigo-600 text-white text-xs px-3 py-1 rounded-bl-lg">Most Popular</span>
+        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 mb-2">Pro</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-300 mb-6">For power users & businesses</p>
+        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-200 mb-6 text-left">
+          <li>🚀 Unlimited links</li>
+          <li>📊 Analytics dashboard</li>
+          <li>🔐 Password protection</li>
+          <li>🔗 Custom slug + QR</li>
+        </ul>
+        <div class="text-3xl font-bold mb-3" id="proPrice">$9 <span class="text-base font-medium">/mo</span></div>
+        <button onclick="openCheckout()" class="w-full bg-indigo-700 text-white py-2.5 rounded-lg hover:bg-indigo-800 transition">Upgrade to Pro</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Checkout Modal -->
+  <div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-6">
+    <div class="bg-white dark:bg-gray-900 rounded-xl p-8 max-w-md w-full shadow-xl relative">
+      <button onclick="closeCheckout()" class="absolute top-2 right-3 text-gray-500 hover:text-red-500 text-xl">×</button>
+      <h3 class="text-xl font-bold mb-4 text-indigo-700 dark:text-indigo-400">Complete your purchase</h3>
+      <p class="mb-4 text-sm text-gray-600 dark:text-gray-300">Choose your payment method:</p>
+      <div class="space-y-4">
+        <button class="w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-4 py-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+          <img src="https://img.icons8.com/color/24/000000/stripe.png" class="mr-2" alt="Stripe logo" /> Pay with Stripe
+        </button>
+        <button class="w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-4 py-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+          <img src="https://img.icons8.com/color/24/000000/paypal.png" class="mr-2" alt="PayPal logo" /> Pay with PayPal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-24 border-t border-gray-200 dark:border-gray-700 py-8 text-sm text-center text-gray-600 dark:text-gray-400">
+    <div class="mb-3">
+      <strong class="text-indigo-600 dark:text-indigo-400">Expirely</strong> &copy; 2025. All rights reserved.
+    </div>
+    <div class="space-x-4">
+      <a href="/privacy" class="hover:underline">Privacy</a>
+      <a href="/terms" class="hover:underline">Terms</a>
+      <a href="/changelog" class="hover:underline">Changelog</a>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    const proPrice = document.getElementById('proPrice');
+    const monthlyBtn = document.getElementById('monthlyBtn');
+    const yearlyBtn = document.getElementById('yearlyBtn');
+    const modal = document.getElementById('checkoutModal');
+
+    monthlyBtn.onclick = () => {
+      proPrice.innerHTML = "$9 <span class='text-base font-medium'>/mo</span>";
+      monthlyBtn.classList.add("bg-indigo-600", "text-white");
+      yearlyBtn.classList.remove("bg-indigo-600", "text-white");
+      yearlyBtn.classList.add("text-gray-700", "dark:text-gray-300");
+    };
+
+    yearlyBtn.onclick = () => {
+      proPrice.innerHTML = "$90 <span class='text-base font-medium'>/year</span>";
+      yearlyBtn.classList.add("bg-indigo-600", "text-white");
+      monthlyBtn.classList.remove("bg-indigo-600", "text-white");
+      monthlyBtn.classList.add("text-gray-700", "dark:text-gray-300");
+    };
+
+    function openCheckout() {
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeCheckout() {
+      modal.classList.remove("flex");
+      modal.classList.add("hidden");
+    }
+  </script>
+
+</body>
+</html>

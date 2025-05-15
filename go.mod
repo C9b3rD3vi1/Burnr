@@ -12,6 +12,8 @@ require (
 
 require github.com/mssola/user_agent v0.6.0
 
+require github.com/stripe/stripe-go/v76 v76.25.0 // indirect
+
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/gofiber/template v1.8.3 // indirect
