@@ -1,40 +1,84 @@
+{{ define "base" }}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="transition duration-300">
+  
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ block "title" . }}Expirely{{ end }}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- TailwindCSS -->
+  <!-- Tailwind CSS & RippleUI -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- RippleUI -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/rippleui.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/rippleui.min.js"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rippleui@1.12.1/dist/css/styles.css" />
 </head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition duration-300">
 
-<body class="bg-gray-100 min-h-screen font-sans flex flex-col">
-
-  <!-- Navbar -->
-  <div class="navbar bg-white shadow-md">
-    <div class="navbar-start">
-      <a href="/" class="text-2xl font-bold text-primary">Expirely</a>
+  <!-- 🌐 Navbar -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="text-xl font-bold text-indigo-600 dark:text-indigo-400">Expirely</a>
+      <nav class="hidden md:flex gap-6 text-sm font-medium">
+        <a href="/" class="hover:text-indigo-600">Home</a>
+        <a href="/pricing" class="hover:text-indigo-600">Pricing</a>
+        <a href="/features" class="hover:text-indigo-600">Features</a>
+        <a href="/faq" class="hover:text-indigo-600">FAQ</a>
+        <a href="/contact" class="hover:text-indigo-600">Contact</a>
+      </nav>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleTheme()" class="text-sm px-3 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+          🌗
+        </button>
+        <button class="md:hidden" onclick="toggleMenu()">☰</button>
+      </div>
     </div>
-    <div class="navbar-end space-x-2">
-      <a href="/" class="btn btn-ghost">Home</a>
-      <a href="/dashboard" class="btn btn-ghost">About</a>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="md:hidden hidden px-4 pb-4">
+      <a href="/" class="block py-2">Home</a>
+      <a href="/pricing" class="block py-2">Pricing</a>
+      <a href="/features" class="block py-2">Features</a>
+      <a href="/faq" class="block py-2">FAQ</a>
+      <a href="/contact" class="block py-2">Contact</a>
     </div>
-  </div>
+  </header>
 
-  <!-- Page Content -->
-  <main class="container mx-auto flex-grow px-4 py-10">
+  <!-- 🌟 Page Content -->
+  <main class="pt-24 px-4 min-h-screen">
     {{ block "content" . }}{{ end }}
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t text-sm text-center text-gray-500 py-4 mt-12">
-    &copy; {{ .Year }} Expirely. All rights reserved.
+  <!-- 📦 Footer -->
+  <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-20">
+    <div class="max-w-7xl mx-auto px-4 py-8 text-sm flex flex-col md:flex-row justify-between gap-4">
+      <div>
+        <strong class="text-indigo-600 dark:text-indigo-400">Expirely</strong> © {{ .year }}<br />
+        All rights reserved.
+      </div>
+      <div class="flex flex-col md:flex-row gap-4">
+        <a href="/privacy" class="hover:underline">Privacy Policy</a>
+        <a href="/terms" class="hover:underline">Terms of Service</a>
+        <a href="/changelog" class="hover:underline">Changelog</a>
+      </div>
+    </div>
   </footer>
 
+  <!-- Scripts -->
+  <script>
+    function toggleTheme() {
+      document.documentElement.classList.toggle("dark");
+      localStorage.setItem("theme", document.documentElement.classList.contains("dark") ? "dark" : "light");
+    }
+
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+
+    function toggleMenu() {
+      document.getElementById("mobileMenu").classList.toggle("hidden");
+    }
+  </script>
 </body>
 </html>
+{{ end }}

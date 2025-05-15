@@ -18,6 +18,7 @@ func main() {
 	// Initialize the Fiber app
 	engine := html.New("./views", ".html")
 	engine.Reload(true)
+	
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
@@ -40,7 +41,10 @@ func main() {
 	})
 	app.Post("/login", handlers.UserLogin) // login page
 
-	app.Get("price", handlers.UserPriceHandler)
+	app.Get("/price", handlers.ShowPricingPage)
+	app.Post("/price/checkout", handlers.HandlePricingCheckout)
+
+
 
 	app.Get("/logout", handlers.UserLogout) // logout page
 
