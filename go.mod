@@ -3,7 +3,7 @@ module github.com/C9b3rD3vi1/Burnr
 go 1.23.7
 
 require (
-	github.com/gofiber/fiber/v2 v2.52.6
+	github.com/gofiber/fiber/v2 v2.52.7
 	github.com/google/uuid v1.6.0
 	golang.org/x/crypto v0.35.0
 	gorm.io/driver/sqlite v1.5.7
@@ -12,7 +12,7 @@ require (
 
 require github.com/mssola/user_agent v0.6.0
 
-require github.com/stripe/stripe-go/v76 v76.25.0 // indirect
+require github.com/stripe/stripe-go/v76 v76.25.0
 
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
