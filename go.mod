@@ -3,7 +3,7 @@ module github.com/C9b3rD3vi1/Burnr
 go 1.23.7
 
 require (
-	github.com/gofiber/fiber/v2 v2.52.9
+	github.com/gofiber/fiber/v2 v2.52.8
 	github.com/google/uuid v1.6.0
 	golang.org/x/crypto v0.35.0
 	gorm.io/driver/sqlite v1.5.7
